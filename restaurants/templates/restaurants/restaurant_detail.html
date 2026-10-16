@@ -1,0 +1,39 @@
+{% extends "restaurants/base.html" %}
+{% block title %}{{ restaurant.name }} | Foodie{% endblock %}
+{% block content %}
+<a class="back-link" href="{% url 'home' %}">← All restaurants</a>
+<section class="restaurant-banner">
+  <p class="eyebrow">{{ restaurant.cuisine }} · {{ restaurant.location }}</p>
+  <h1>{{ restaurant.name }}</h1><p>{{ restaurant.description }}</p>
+</section>
+<div class="section-heading">
+  <div><p class="eyebrow">MADE FOR YOU</p><h2>Our menu</h2></div>
+  <form method="get" class="filter-form">
+    <select name="category" aria-label="Filter by category">
+      <option value="">All categories</option>
+      {% for category in categories %}
+      <option value="{{ category.id }}" {% if selected_category == category.id|stringformat:"s" %}selected{% endif %}>{{ category.name }}</option>
+      {% endfor %}
+    </select><button type="submit" class="button-secondary">Filter</button>
+  </form>
+</div>
+<div class="food-grid">
+{% for food in menu_items %}
+  <article class="food-card">
+    {% if food.image_url %}<img class="food-image" src="{{ food.image_url }}" alt="{{ food.name }}">
+    {% else %}<div class="food-image placeholder">🍛</div>{% endif %}
+    <div class="card-content">
+      <span class="veg-label">{% if food.is_vegetarian %}🟢 Vegetarian{% else %}🔴 Non-vegetarian{% endif %}</span>
+      <h3>{{ food.name }}</h3><p>{{ food.description|default:"Prepared fresh and served with care." }}</p>
+      <div class="price-row"><strong>₹{{ food.price }}</strong>
+        <form method="post" action="{% url 'add_to_cart' food.id %}">{% csrf_token %}
+          <input type="hidden" name="next" value="{% url 'restaurant_detail' restaurant.id %}">
+          <button type="submit" class="add-button">+ Add</button>
+        </form>
+      </div>
+      <a class="text-link details-link" href="{% url 'food_detail' food.id %}">View details →</a>
+    </div>
+  </article>
+{% empty %}<div class="empty-state"><h3>No menu items in this category</h3><p>Please select another category.</p></div>{% endfor %}
+</div>
+{% endblock %}

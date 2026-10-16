@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Foodie — Food Delivery{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'restaurants/style.css' %}">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="{% url 'home' %}">🍽️ Foodie</a>
+    <nav class="nav-links">
+      <a href="{% url 'home' %}">Restaurants</a>
+      <a class="nav-cart" href="{% url 'cart' %}">🛒 Cart</a>
+      <a class="account-link" href="{% url 'admin:index' %}" title="Account">👤 Account</a>
+    </nav>
+  </header>
+  <main class="container">{% block content %}{% endblock %}</main>
+  <footer class="footer">Foodie Demo · Built with Python & Django</footer>
+</body>
+</html>

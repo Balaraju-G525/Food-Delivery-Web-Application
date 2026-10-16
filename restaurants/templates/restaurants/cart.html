@@ -1,0 +1,35 @@
+{% extends "restaurants/base.html" %}
+{% block title %}Your Cart | Foodie{% endblock %}
+{% block content %}
+<a class="back-link" href="{% url 'home' %}">← Continue shopping</a>
+<section class="section-heading cart-heading"><div><p class="eyebrow">YOUR ORDER</p><h1>Your Shopping Cart</h1></div><span class="muted">{{ count }} item{{ count|pluralize }}</span></section>
+{% if items %}
+<div class="cart-layout">
+  <section class="cart-items">
+    {% for item in items %}
+    <article class="cart-item">
+      <div class="cart-food-icon">🍲</div>
+      <div class="cart-item-info"><h3>{{ item.food.name }}</h3><p class="muted">{{ item.food.restaurant.name }}</p><strong>₹{{ item.food.price }} each</strong></div>
+      <div class="cart-controls">
+        <form method="post" action="{% url 'update_cart' item.food.id %}">{% csrf_token %}<input type="hidden" name="action" value="decrease"><button class="quantity-button">−</button></form>
+        <span class="quantity">{{ item.quantity }}</span>
+        <form method="post" action="{% url 'update_cart' item.food.id %}">{% csrf_token %}<input type="hidden" name="action" value="increase"><button class="quantity-button">+</button></form>
+      </div>
+      <div class="cart-subtotal"><strong>₹{{ item.subtotal }}</strong><form method="post" action="{% url 'update_cart' item.food.id %}">{% csrf_token %}<input type="hidden" name="action" value="remove"><button class="remove-button">Remove</button></form></div>
+    </article>
+    {% endfor %}
+    <form method="post" action="{% url 'clear_cart' %}" class="clear-form">{% csrf_token %}<button type="submit" class="button-secondary">Clear cart</button></form>
+  </section>
+  <aside class="order-summary"><h2>Order Summary</h2>
+    <div class="summary-line"><span>Items ({{ count }})</span><span>₹{{ total }}</span></div>
+    <div class="summary-line"><span>Delivery fee</span><span>₹0.00</span></div>
+    <div class="summary-line"><span>Tax</span><span>₹0.00</span></div><hr>
+    <div class="summary-line total-line"><strong>Total</strong><strong>₹{{ total }}</strong></div>
+    <p class="muted summary-note">Delivery and tax are ₹0 in this demo.</p>
+    <button type="button" class="checkout-button" onclick="alert('Demo only: checkout and payment are not implemented yet.')">Place Order · ₹{{ total }}</button>
+  </aside>
+</div>
+{% else %}
+<div class="empty-state cart-empty"><div class="empty-emoji">🛒</div><h2>Your cart is empty</h2><p>Add food from a restaurant menu to get started.</p><a class="button-link" href="{% url 'home' %}">Browse restaurants</a></div>
+{% endif %}
+{% endblock %}

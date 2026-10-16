@@ -1,0 +1,21 @@
+{% extends "restaurants/base.html" %}
+{% block title %}{{ food.name }} | Foodie{% endblock %}
+{% block content %}
+<a class="back-link" href="{% url 'restaurant_detail' food.restaurant.id %}">← Back to {{ food.restaurant.name }}</a>
+<section class="detail-layout">
+  {% if food.image_url %}<img class="detail-image" src="{{ food.image_url }}" alt="{{ food.name }}">
+  {% else %}<div class="detail-image placeholder">🍽️</div>{% endif %}
+  <div class="detail-copy">
+    <span class="tag">{{ food.category.name|default:"Menu item" }}</span>
+    <p class="veg-label">{% if food.is_vegetarian %}🟢 Vegetarian{% else %}🔴 Non-vegetarian{% endif %}</p>
+    <h1>{{ food.name }}</h1><p>{{ food.description|default:"A delicious choice from our menu." }}</p>
+    <p class="detail-price">₹{{ food.price }}</p>
+    <p class="muted">From <strong>{{ food.restaurant.name }}</strong> · {{ food.restaurant.location }}</p>
+    <form method="post" action="{% url 'add_to_cart' food.id %}">{% csrf_token %}
+      <input type="hidden" name="next" value="{% url 'food_detail' food.id %}">
+      <button type="submit">🛒 Add to cart</button>
+    </form>
+    <p class="demo-note">Demo only: cart totals work; real payments are not enabled.</p>
+  </div>
+</section>
+{% endblock %}
